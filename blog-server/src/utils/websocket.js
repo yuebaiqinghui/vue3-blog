@@ -6,11 +6,11 @@ const { createChat } = require("../service/chat/index");
 const onlineList = [];
 
 const initWebsocket = () => {
-  // 我们的 port 是 8889
-  const wss = new WebSocketServer({ port: 8889 });
+  // 我们的 port 是 8899
+  const wss = new WebSocketServer({ port: 8899 });
 
   if (wss) {
-    console.log("websocket Initialized successfully on port: " + 8889);
+    console.log("websocket Initialized successfully on port: " + 8899);
   }
 
   wss.on("connection", function connection(ws, request) {
