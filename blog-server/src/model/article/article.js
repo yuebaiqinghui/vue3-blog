@@ -29,7 +29,7 @@ const Article = seq.define(
       comment: "描述信息 不能为空",
     },
     article_content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
       require: true,
       comment: "文章内容",
     },
