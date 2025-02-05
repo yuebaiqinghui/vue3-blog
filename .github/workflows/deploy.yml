@@ -1,0 +1,71 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-frontend1:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.head_commit.message, 'blog-v3') ||
+      github.event.head_commit.modified_files == 'blog-v3/' ||
+      any(github.event.head_commit.modified_files =~ '^blog-v3/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies and build frontend1
+        run: |
+          cd blog-v3
+          npm install
+          npm run build
+
+      - name: Deploy frontend1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "frontend1/dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "/path/to/frontend1/deployment/"
+
+  deploy-frontend2:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.head_commit.message, 'blog-v3-admin') ||
+      github.event.head_commit.modified_files == 'blog-v3-admin/' ||
+      any(github.event.head_commit.modified_files =~ '^blog-v3-admin/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        run: |
+          npm install -g pnpm
+
+      - name: Install dependencies and build frontend2 with pnpm
+        run: |
+          cd blog-v3-admin
+          pnpm install
+          pnpm build
+
+      - name: Deploy frontend2
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "frontend2/dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: "/path/to/frontend2/deployment/"
