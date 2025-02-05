@@ -130,10 +130,10 @@ onBeforeUnmount(() => {
           <div class="desc-title">{{ "欢迎来到" + blogName }}</div>
         </template>
         <el-descriptions-item label="博客链接"
-          ><span v-copy="'http://mrzym.top/'" class="!cursor-pointer">http://mrzym.top/</span>
+          ><span v-copy="'http://http://154.9.255.213/'" class="!cursor-pointer">http://mrzym.top/</span>
         </el-descriptions-item>
         <el-descriptions-item label="QQ">
-          <span v-copy="'2715158815'" class="!cursor-pointer">2715158815</span>
+          <span v-copy="'604039372'" class="!cursor-pointer">2715158815</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <span class="desc-remark" style="text-shadow: none">
