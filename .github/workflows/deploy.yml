@@ -11,7 +11,8 @@ jobs:
     if: |
       contains(github.event.head_commit.message, 'blog-v3') ||
       github.event.head_commit.modified_files == 'blog-v3/' ||
-      any(github.event.head_commit.modified_files =~ '^blog-v3/')
+      github.event.head_commit.modified_files == 'blog-v3/.gitmodules' ||
+      github.event.head_commit.modified_files == 'blog-v3/.github/workflows/deploy.yml'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -41,7 +42,8 @@ jobs:
     if: |
       contains(github.event.head_commit.message, 'blog-v3-admin') ||
       github.event.head_commit.modified_files == 'blog-v3-admin/' ||
-      any(github.event.head_commit.modified_files =~ '^blog-v3-admin/')
+      github.event.head_commit.modified_files == 'blog-v3-admin/.gitmodules' ||
+      github.event.head_commit.modified_files == 'blog-v3-admin/.github/workflows/deploy.yml'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
