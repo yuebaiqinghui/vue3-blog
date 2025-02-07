@@ -2,8 +2,8 @@ import { ref, onMounted, reactive } from "vue";
 import { message } from "@/utils/message";
 import { useRoute, useRouter } from "vue-router";
 
-import { getCategoryDictionary } from "@/api/category";
-import { getTagDictionary } from "@/api/tag";
+import { getCategoryDictionary, addCategory } from "@/api/category";
+import { getTagDictionary, addTag } from "@/api/tag";
 import {
   addArticle,
   editArticle,
@@ -18,6 +18,24 @@ import { useNav } from "@/layout/hooks/useNav";
 export function useArticle() {
   const { userId } = useNav();
   const dialogVisible = ref(false);
+  const tagDialogVisible = ref(false);
+  const categoryDialogVisible = ref(false);
+  const form = reactive({
+    id: "",
+    tag_name: ""
+  });
+  const rules = reactive({
+    tag_name: [{ required: true, message: "请输入标签名称", trigger: "blur" }]
+  });
+  const categoryForm = reactive({
+    id: "",
+    category_name: ""
+  });
+  const categoryRules = reactive({
+    category_name: [
+      { required: true, message: "请输入分类名称", trigger: "blur" }
+    ]
+  });
   const articleFormRef = ref();
   const dialogArticleFormRef = ref();
   const route = useRoute();
@@ -81,9 +99,9 @@ export function useArticle() {
       trigger: ["change"]
     },
     coverList: {
-      required: true,
-      message: "请上传文章封面",
-      validator: coverV,
+      required: false,
+      // message: "请上传文章封面",
+      // validator: coverV,
       trigger: ["change"]
     },
     origin_url: {
@@ -108,12 +126,22 @@ export function useArticle() {
     resetForm(dialogArticleFormRef.value);
     dialogVisible.value = false;
   }
-
+  function closeTagDialog() {
+    tagDialogVisible.value = false;
+  }
+  function closeCategoryDialog() {
+    categoryDialogVisible.value = false;
+  }
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
   };
-
+  async function updateTag() {
+    tagDialogVisible.value = true;
+  }
+  async function updateCategory() {
+    categoryDialogVisible.value = true;
+  }
   // 发布文章 打开弹窗
   async function publish(formEl) {
     if (!formEl) return;
@@ -264,12 +292,39 @@ export function useArticle() {
       tagOptionList.value = res.result;
     }
   }
+
+  async function submitTagForm(tagFormEl) {
+    if (!tagFormEl) return;
+    await tagFormEl.validate(async valid => {
+      if (valid) {
+        const res = await addTag(form);
+        if (res.code == 0) {
+          message("新增成功", { type: "success" });
+          tagDialogVisible.value = false;
+          getTagD();
+        }
+      }
+    });
+  }
   // 获取分类列表
   async function getCategoryD() {
     const res = await getCategoryDictionary();
     if (res.code == 0) {
       categoryOptionList.value = res.result;
     }
+  }
+  async function submitCategoryForm(categoryFormEl) {
+    if (!categoryFormEl) return;
+    await categoryFormEl.validate(async valid => {
+      if (valid) {
+        const res = await addCategory(categoryForm);
+        if (res.code == 0) {
+          message("新增成功", { type: "success" });
+          categoryDialogVisible.value = false;
+          getCategoryD();
+        }
+      }
+    });
   }
   // 根据id获取文章详情
   async function getArticleDetailsById(article_id) {
@@ -304,6 +359,12 @@ export function useArticle() {
     coverUrl,
     articleForm,
     dialogVisible,
+    tagDialogVisible,
+    categoryDialogVisible,
+    form,
+    rules,
+    categoryForm,
+    categoryRules,
     tagOptionList,
     articleFormRef,
     articleFormRules,
@@ -311,7 +372,13 @@ export function useArticle() {
     coverPreviewVisible,
     dialogArticleFormRef,
     dialogArticleFormRules,
+    updateTag,
+    submitTagForm,
+    updateCategory,
+    submitCategoryForm,
     closeDialog,
+    closeCategoryDialog,
+    closeTagDialog,
     uploadImage,
     publish,
     submitForm,

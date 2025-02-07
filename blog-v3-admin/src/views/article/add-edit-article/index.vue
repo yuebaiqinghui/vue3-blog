@@ -4,12 +4,16 @@ import "md-editor-v3/lib/style.css";
 import DocumentChecked from "@iconify-icons/ep/document-checked";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Upload from "@/components/Upload/upload.vue";
-
+import Add from "@iconify-icons/ep/circle-plus";
+import { ref } from "vue";
 import { useArticle } from "./index";
+const tagFormRef = ref();
+const categoryFormRef = ref();
 const {
   coverUrl,
   articleForm,
   dialogVisible,
+  categoryDialogVisible,
   tagOptionList,
   articleFormRef,
   articleFormRules,
@@ -17,7 +21,18 @@ const {
   coverPreviewVisible,
   dialogArticleFormRef,
   dialogArticleFormRules,
+  tagDialogVisible,
+  form,
+  rules,
+  categoryForm,
+  categoryRules,
   closeDialog,
+  closeCategoryDialog,
+  closeTagDialog,
+  updateTag,
+  submitTagForm,
+  updateCategory,
+  submitCategoryForm,
   publish,
   submitForm,
   uploadImage,
@@ -70,6 +85,64 @@ const {
         />
       </el-form-item>
     </el-form>
+    <el-dialog
+      title="新增标签"
+      v-model="tagDialogVisible"
+      :width="480"
+      draggable
+      :before-close="closeTagDialog"
+    >
+      <el-form
+        ref="tagFormRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-form-item label="标签名称" prop="tag_name">
+          <el-input
+            v-model="form.tag_name"
+            :style="{ width: '380px' }"
+            placeholder="请输入标签名称"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="closeTagDialog">取消</el-button>
+        <el-button type="primary" @click="submitTagForm(tagFormRef)">
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
+    <el-dialog
+      title="新增分类"
+      v-model="categoryDialogVisible"
+      :width="480"
+      draggable
+      :before-close="closeCategoryDialog"
+    >
+      <el-form
+        ref="categoryFormRef"
+        :model="categoryForm"
+        :rules="categoryRules"
+        label-width="100px"
+      >
+        <el-form-item label="分类名称" prop="category_name">
+          <el-input
+            v-model="categoryForm.category_name"
+            :style="{ width: '380px' }"
+            placeholder="请输入分类名称"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="closeCategoryDialog">取消</el-button>
+        <el-button type="primary" @click="submitCategoryForm(categoryFormRef)">
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
     <el-dialog
       title="发布文章"
       v-model="dialogVisible"
@@ -126,6 +199,14 @@ const {
               :value="item.id"
             />
           </el-select>
+          <el-button
+            class="reset-margin"
+            type="primary"
+            size="small"
+            :icon="useRenderIcon(Add)"
+            @click="updateCategory"
+            >新增</el-button
+          >
         </el-form-item>
         <el-form-item label="文章标签" prop="tagIdList">
           <el-select
@@ -145,6 +226,14 @@ const {
               :value="item.id"
             />
           </el-select>
+          <el-button
+            class="reset-margin"
+            type="primary"
+            size="small"
+            :icon="useRenderIcon(Add)"
+            @click="updateTag"
+            >新增</el-button
+          >
         </el-form-item>
         <el-form-item
           class="form-item100 article-cover"
