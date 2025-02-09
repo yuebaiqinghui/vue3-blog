@@ -22,6 +22,14 @@ export const getCommitList = () => {
     "/gitee/contribution_timeline?url=%2Fmrzym%2Fcontribution_timeline&scope=my&day=&start_date=&end_date=&year=&limit=180&prev_id=&_=1683426798995"
   );
 };
+/** 通过自己的服务器代理 GitHub 请求 */
+export const getGitHubCommitList = (owner: string, repo: string) => {
+  // 移除 "repos"，让 nginx 拼接后的完整路径正确
+  return http.request<Array<object>>(
+    "get",
+    `/apigithub/${owner}/${repo}/commits`
+  );
+};
 
 /** 修改网站config */
 export const updateConfigDetail = data => {

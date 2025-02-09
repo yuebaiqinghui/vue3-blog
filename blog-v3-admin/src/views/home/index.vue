@@ -9,7 +9,7 @@ import biaoqian from "@/assets/svg/biaoqian.svg?component";
 import fenlei from "@/assets/svg/fenlei.svg?component";
 import wenzhang from "@/assets/svg/wenzhang.svg?component";
 import yonghu from "@/assets/svg/yonghu.svg?component";
-import { getCommitList } from "@/api/site";
+import { getCommitList, getGitHubCommitList } from "@/api/site";
 import { dayjs } from "element-plus";
 import { debounce } from "@pureadmin/utils";
 import { useAppStoreHook } from "@/store/modules/app";
@@ -62,7 +62,27 @@ const getCodeCommit = async () => {
 
   staticsData.value.commitList = arr;
 };
+// 示例：使用 GitHub 提交记录统计每日提交数
+const getGithubCommit = async () => {
+  const arr = createDayArr();
+  // 请将下列 owner 与 repo 替换为你的 GitHub 用户名与仓库名
+  const owner = "yuebaiqinghui";
+  const repo = "vue3-blog";
+  const res: any = await getGitHubCommitList(owner, repo);
 
+  res.length &&
+    res.forEach(v => {
+      // GitHub 的提交日期在 v.commit.author.date 中（格式形如 "2025-02-09T12:34:56Z"）
+      const date = v.commit.author.date.split("T")[0];
+      const index = arr.findIndex(d => d[0] === date);
+      if (index !== -1) {
+        // 每条记录计数为 1（如果有多个提交，同一天会多次累加）
+        arr[index][1] = Number(arr[index][1]) + 1;
+      }
+    });
+
+  staticsData.value.commitList = arr;
+};
 const resize = debounce(() => {
   // resize echarts
   codeMapChartRef.value && codeMapChartRef.value.init();
@@ -79,7 +99,8 @@ watch(
 
 onMounted(() => {
   getStatisticData();
-  getCodeCommit();
+  // getCodeCommit();
+  getGithubCommit();
 
   window.addEventListener("resize", resize);
 });

@@ -42,9 +42,9 @@ const init = () => {
         max: 5,
         inRange: {
           // gitlab
-          color: ["#ededed", "#acd5f2", "#7fa8d1", "#49729b", "#254e77"]
+          // color: ["#ededed", "#acd5f2", "#7fa8d1", "#49729b", "#254e77"]
           // github
-          // color: ["#eeeeee", "#d6e685", "#8cc665", "#44a340", "#1e6823"]
+          color: ["#eeeeee", "#d6e685", "#8cc665", "#44a340", "#1e6823"]
         }
       },
       calendar: {
