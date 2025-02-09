@@ -27,7 +27,7 @@ export const getGitHubCommitList = (owner: string, repo: string) => {
   // 移除 "repos"，让 nginx 拼接后的完整路径正确
   return http.request<Array<object>>(
     "get",
-    `/apigithub/${owner}/${repo}/commits`
+    `/githubrec/${owner}/${repo}/commits`
   );
 };
 
